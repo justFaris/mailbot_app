@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/screens/add_item_screen.dart';
+import 'package:mailbot_app/screens/delivery_info_screen.dart';
 import 'package:mailbot_app/screens/settings_screen.dart';
 
 import 'camera_his_screen.dart';
@@ -201,7 +202,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.add,
                         color: Colors.blueGrey,
                       ),
-                      onPressed: () {})
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return AddItem();
+                          }),
+                        );
+                      })
                 ],
               ),
               Container(
@@ -218,7 +226,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              print("$i");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  return DeliveryInfo();
+                                }),
+                              );
                             },
                             child: Padding(
                               padding:
@@ -271,7 +284,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        print("Item 1");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return DeliveryInfo();
+                          }),
+                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20.0, top: 10),
@@ -301,12 +319,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 23.0, top: 10),
-                    child: Text(
-                      "expand",
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return DeliveryHistory();
+                          }),
+                        );
+                      },
+                      child: Text(
+                        "expand",
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

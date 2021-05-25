@@ -26,61 +26,63 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
           style: TextStyle(color: Colors.grey[600]),
         ),
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 50),
-          Text(
-            'Your old email',
-            style: TextStyle(fontSize: 30), //TextStyle
-          ),
-          Container(
-            padding: EdgeInsets.only(
-              left: 35,
-              right: 35,
-              bottom: 50,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 50),
+            Text(
+              'Your old email',
+              style: TextStyle(fontSize: 30), //TextStyle
             ),
-            child: Card(
-              elevation: 10,
-              child: TextField(
-                controller: _textEditingController1,
+            Container(
+              padding: EdgeInsets.only(
+                left: 35,
+                right: 35,
+                bottom: 50,
+              ),
+              child: Card(
+                elevation: 10,
+                child: TextField(
+                  controller: _textEditingController1,
+                ),
               ),
             ),
-          ),
-          Text(
-            'Enter your new email',
-            style: TextStyle(fontSize: 30), //TextStyle
-          ),
-          Container(
-            padding: EdgeInsets.only(
-              left: 35,
-              right: 35,
+            Text(
+              'Enter your new email',
+              style: TextStyle(fontSize: 30), //TextStyle
             ),
-            child: Card(
-              elevation: 10,
-              child: TextField(
-                controller: _textEditingController2,
+            Container(
+              padding: EdgeInsets.only(
+                left: 35,
+                right: 35,
+              ),
+              child: Card(
+                elevation: 10,
+                child: TextField(
+                  controller: _textEditingController2,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          Container(
-            width: 330,
-            height: 50,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                Colors.blueGrey,
-              )),
-              child: Text(
-                'OK',
-                style: TextStyle(fontSize: 20),
-              ),
-              onPressed: () {},
+            SizedBox(
+              height: 30,
             ),
-          )
-        ],
+            Container(
+              width: 330,
+              height: 50,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                  Colors.blueGrey,
+                )),
+                child: Text(
+                  'OK',
+                  style: TextStyle(fontSize: 20),
+                ),
+                onPressed: () {},
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

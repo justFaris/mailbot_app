@@ -26,78 +26,80 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
           style: TextStyle(color: Colors.grey[600]),
         ),
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 50),
-          Text(
-            'Enter your old password',
-            style: TextStyle(fontSize: 20), //TextStyle
-          ),
-          Container(
-            padding: EdgeInsets.only(
-              left: 35,
-              right: 35,
-              bottom: 20,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 50),
+            Text(
+              'Enter your old password',
+              style: TextStyle(fontSize: 20), //TextStyle
             ),
-            child: Card(
-              elevation: 10,
-              child: TextField(
-                controller: _textEditingController1,
+            Container(
+              padding: EdgeInsets.only(
+                left: 35,
+                right: 35,
+                bottom: 20,
+              ),
+              child: Card(
+                elevation: 10,
+                child: TextField(
+                  controller: _textEditingController1,
+                ),
               ),
             ),
-          ),
-          Text(
-            'Enter your new password',
-            style: TextStyle(fontSize: 20), //TextStyle
-          ),
-          Container(
-            padding: EdgeInsets.only(
-              left: 35,
-              right: 35,
-              bottom: 20,
+            Text(
+              'Enter your new password',
+              style: TextStyle(fontSize: 20), //TextStyle
             ),
-            child: Card(
-              elevation: 10,
-              child: TextField(
-                controller: _textEditingController2,
+            Container(
+              padding: EdgeInsets.only(
+                left: 35,
+                right: 35,
+                bottom: 20,
+              ),
+              child: Card(
+                elevation: 10,
+                child: TextField(
+                  controller: _textEditingController2,
+                ),
               ),
             ),
-          ),
-          Text(
-            'Confirm new password',
-            style: TextStyle(fontSize: 20), //TextStyle
-          ),
-          Container(
-            padding: EdgeInsets.only(
-              left: 35,
-              right: 35,
+            Text(
+              'Confirm new password',
+              style: TextStyle(fontSize: 20), //TextStyle
             ),
-            child: Card(
-              elevation: 10,
-              child: TextField(
-                controller: _textEditingController2,
+            Container(
+              padding: EdgeInsets.only(
+                left: 35,
+                right: 35,
+              ),
+              child: Card(
+                elevation: 10,
+                child: TextField(
+                  controller: _textEditingController2,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          Container(
-            width: 330,
-            height: 50,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                Colors.blueGrey,
-              )),
-              child: Text(
-                'OK',
-                style: TextStyle(fontSize: 20),
-              ),
-              onPressed: () {},
+            SizedBox(
+              height: 30,
             ),
-          )
-        ],
+            Container(
+              width: 330,
+              height: 50,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                  Colors.blueGrey,
+                )),
+                child: Text(
+                  'OK',
+                  style: TextStyle(fontSize: 20),
+                ),
+                onPressed: () {},
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

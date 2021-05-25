@@ -1,5 +1,7 @@
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mailbot_app/screens/home_screen.dart';
 
 class ConnectToMailbot extends StatefulWidget {
   @override
@@ -8,7 +10,7 @@ class ConnectToMailbot extends StatefulWidget {
 
 class _ConnectToMailbotState extends State<ConnectToMailbot> {
   final TextEditingController _textEditingController = TextEditingController();
-
+  bool connected = true;
   @override
   void dispose() {
     super.dispose();
@@ -67,13 +69,29 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
                   style: TextStyle(fontSize: 15),
                 ),
                 onPressed: () {
-                  print('ok');
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) {
-                  //     return SuccessfullyReg(_textEditingController);
-                  //   }),
-                  // );
+                  if (connected) {
+                    EdgeAlert.show(
+                      context,
+                      title: 'Connnected',
+                      icon: Icons.done,
+                      backgroundColor: Colors.green,
+                      gravity: EdgeAlert.TOP,
+                    );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return HomeScreen();
+                      }),
+                    );
+                  } else {
+                    EdgeAlert.show(
+                      context,
+                      title: 'Faild To Connect',
+                      icon: Icons.error,
+                      backgroundColor: Colors.red,
+                      gravity: EdgeAlert.TOP,
+                    );
+                  }
                 },
               ),
             )
