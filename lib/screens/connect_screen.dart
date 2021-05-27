@@ -77,7 +77,7 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
                       backgroundColor: Colors.green,
                       gravity: EdgeAlert.TOP,
                     );
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) {
                         return HomeScreen();

@@ -114,16 +114,25 @@ class _RegisterState extends State<Register> {
                               backgroundColor: Colors.green,
                               gravity: EdgeAlert.TOP,
                             );
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(builder: (context) {
                                 return ConnectToMailbot();
                               }),
                             );
+                          }
+                          if (value == 'email exists') {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Email is already exists',
+                              icon: Icons.error,
+                              backgroundColor: Colors.red,
+                              gravity: EdgeAlert.TOP,
+                            );
                           } else {
                             EdgeAlert.show(
                               context,
-                              title: 'Faild To Register',
+                              title: 'Faild to register',
                               icon: Icons.error,
                               backgroundColor: Colors.red,
                               gravity: EdgeAlert.TOP,
