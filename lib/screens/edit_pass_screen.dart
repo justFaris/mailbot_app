@@ -1,4 +1,7 @@
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:mailbot_app/logic/DAO.dart';
+import 'package:mailbot_app/logic/User.dart';
 
 class EditPasswordScreen extends StatefulWidget {
   EditPasswordScreen({Key key}) : super(key: key);
@@ -10,6 +13,7 @@ class EditPasswordScreen extends StatefulWidget {
 class _EditPasswordScreenState extends State<EditPasswordScreen> {
   final TextEditingController _textEditingController1 = TextEditingController();
   final TextEditingController _textEditingController2 = TextEditingController();
+  var sql = DAO();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,6 +48,8 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                 elevation: 10,
                 child: TextField(
                   controller: _textEditingController1,
+                  textAlign: TextAlign.center,
+                  obscureText: true,
                 ),
               ),
             ),
@@ -61,27 +67,10 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                 elevation: 10,
                 child: TextField(
                   controller: _textEditingController2,
+                  textAlign: TextAlign.center,
+                  obscureText: true,
                 ),
               ),
-            ),
-            Text(
-              'Confirm new password',
-              style: TextStyle(fontSize: 20), //TextStyle
-            ),
-            Container(
-              padding: EdgeInsets.only(
-                left: 35,
-                right: 35,
-              ),
-              child: Card(
-                elevation: 10,
-                child: TextField(
-                  controller: _textEditingController2,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 30,
             ),
             Container(
               width: 330,
@@ -95,7 +84,25 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                   'OK',
                   style: TextStyle(fontSize: 20),
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  if (_textEditingController1.text.isNotEmpty) {
+                    if (_textEditingController2.text.isNotEmpty) {
+                      if (_textEditingController1.text !=
+                          _textEditingController2.text) {
+                        print(
+                            User(password: _textEditingController2.text).hash);
+                      } else {
+                        EdgeAlert.show(
+                          context,
+                          title: 'Old pass is same new pass',
+                          icon: Icons.error,
+                          backgroundColor: Colors.red,
+                          gravity: EdgeAlert.TOP,
+                        );
+                      }
+                    }
+                  }
+                },
               ),
             )
           ],

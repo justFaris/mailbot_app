@@ -1,4 +1,7 @@
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:mailbot_app/logic/DAO.dart';
+import 'package:mailbot_app/logic/User.dart';
 
 class EditEmailScreen extends StatefulWidget {
   EditEmailScreen({Key key}) : super(key: key);
@@ -8,6 +11,7 @@ class EditEmailScreen extends StatefulWidget {
 }
 
 class _EditEmailScreenState extends State<EditEmailScreen> {
+  var sql = DAO();
   final TextEditingController _textEditingController1 = TextEditingController();
   final TextEditingController _textEditingController2 = TextEditingController();
   @override
@@ -78,7 +82,56 @@ class _EditEmailScreenState extends State<EditEmailScreen> {
                   'OK',
                   style: TextStyle(fontSize: 20),
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  if (_textEditingController1.text.isNotEmpty &&
+                      _textEditingController1.text.contains("@")) {
+                    if (_textEditingController2.text.isNotEmpty &&
+                        _textEditingController2.text.contains("@")) {
+                      if (_textEditingController1.text !=
+                          _textEditingController2.text) {
+                        await sql
+                            .editEmail(_textEditingController1.text,
+                                _textEditingController2.text)
+                            .then((value) {
+                          print(value);
+                          if (value == "email exists") {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Email is already exists',
+                              icon: Icons.error,
+                              backgroundColor: Colors.red,
+                              gravity: EdgeAlert.TOP,
+                            );
+                          } else if (value == "email changed") {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Email Changed',
+                              icon: Icons.done,
+                              backgroundColor: Colors.green,
+                              gravity: EdgeAlert.TOP,
+                            );
+                          } else {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Error',
+                              icon: Icons.error,
+                              backgroundColor: Colors.red,
+                              gravity: EdgeAlert.TOP,
+                            );
+                          }
+                        });
+                      } else {
+                        EdgeAlert.show(
+                          context,
+                          title: 'Old email is same new email',
+                          icon: Icons.error,
+                          backgroundColor: Colors.red,
+                          gravity: EdgeAlert.TOP,
+                        );
+                      }
+                    }
+                  }
+                },
               ),
             )
           ],

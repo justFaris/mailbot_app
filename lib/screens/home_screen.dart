@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mailbot_app/logic/DAO.dart';
+import 'package:mailbot_app/logic/savedata.dart';
+import 'package:mailbot_app/models/dileveryitemmodel.dart';
 import 'package:mailbot_app/screens/add_item_screen.dart';
 import 'package:mailbot_app/screens/delivery_info_screen.dart';
 import 'package:mailbot_app/screens/settings_screen.dart';
@@ -14,7 +17,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<DItem> items = [];
+  var sql = DAO();
+  var serial = "";
   @override
+  void initState() {
+    sql.getItems().then((value) {
+      setState(() {
+        items = value;
+      });
+    });
+
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[350],
@@ -27,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'MailBot Serial Number',
+                serial,
                 style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 16,
@@ -219,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   border: Border.all(color: Colors.grey),
                 ),
                 child: ListView.builder(
-                    itemCount: 10,
+                    itemCount: items.length,
                     itemBuilder: (ctx, i) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,14 +245,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) {
-                                  return DeliveryInfo();
+                                  return DeliveryInfo(
+                                    title: items[i].title.toString(),
+                                    num: items[i].id.toString(),
+                                    time: items[i].time,
+                                  );
                                 }),
                               );
                             },
                             child: Padding(
                               padding:
                                   const EdgeInsets.only(left: 20.0, top: 10),
-                              child: Text("Item $i",
+                              child: Text(items[i].title,
                                   style: TextStyle(
                                     color: Colors.blueGrey,
                                   )),

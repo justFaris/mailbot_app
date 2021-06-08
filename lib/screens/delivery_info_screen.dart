@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
 
 class DeliveryInfo extends StatefulWidget {
-  DeliveryInfo({Key key}) : super(key: key);
+  final String title;
+  final String num;
+  final DateTime time;
+  DeliveryInfo({this.title, this.num, this.time});
 
   @override
-  _DeliveryInfoState createState() => _DeliveryInfoState();
+  _DeliveryInfoState createState() => _DeliveryInfoState(title, num, time);
 }
 
 class _DeliveryInfoState extends State<DeliveryInfo> {
+  String title, num;
+  DateTime time;
+  _DeliveryInfoState(this.title, this.num, this.time);
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +64,7 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Order No.'),
-                        Text('20'),
+                        Text(num),
                       ],
                     ),
                   ),
@@ -75,7 +87,7 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Order Title'),
-                        Text('Some Cond'),
+                        Text(title),
                       ],
                     ),
                   ),
@@ -125,7 +137,7 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                     color: Colors.grey,
                   ),
                   child: Center(
-                    child: Text('DD/MM/YY'),
+                    child: Text(time.toString()),
                   ),
                 ),
               ),

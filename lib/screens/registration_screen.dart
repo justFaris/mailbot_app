@@ -101,10 +101,11 @@ class _RegisterState extends State<Register> {
                     ),
                     onPressed: () {
                       if (_textEditingController.text.length != 0 ||
-                          _textEditingController3.text != 0) {
+                          _textEditingController3.text.length != 0) {
                         sql
-                            .insertUser(User(_textEditingController.text,
-                                'SERIAL', _textEditingController3.text))
+                            .insertUser(User(
+                                mail: _textEditingController.text,
+                                password: _textEditingController3.text))
                             .then((value) {
                           if (value == 'Inserted user succesfullly') {
                             EdgeAlert.show(
