@@ -32,7 +32,7 @@ dependencies:
   mysql1: ^0.19.2
   password: ^1.0.0
   flutter_secure_storage: ^3.3.5
-
+  flutter_local_notifications: ^4.0.1+2
 dev_dependencies:
   flutter_test:
     sdk: flutter

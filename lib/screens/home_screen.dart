@@ -5,6 +5,7 @@ import 'package:mailbot_app/models/dileveryitemmodel.dart';
 import 'package:mailbot_app/screens/add_item_screen.dart';
 import 'package:mailbot_app/screens/delivery_info_screen.dart';
 import 'package:mailbot_app/screens/settings_screen.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'camera_his_screen.dart';
 import 'delivery_his_screen.dart';
@@ -20,6 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<DItem> items = [];
   var sql = DAO();
   var serial = "";
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
   @override
   void initState() {
     sql.getItems().then((value) {
@@ -27,8 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
         items = value;
       });
     });
-
     super.initState();
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    var android = new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var iOS = new IOSInitializationSettings();
+    var initSetttings = new InitializationSettings(android: android, iOS: iOS);
+    flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: onSelectNotification);
   }
 
   Widget build(BuildContext context) {
@@ -219,12 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.blueGrey,
                       ),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return AddItem();
-                          }),
-                        );
+                        showNotification();
                       })
                 ],
               ),
@@ -363,6 +366,27 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  showNotification() async {
+    var android = new AndroidNotificationDetails(
+        'channel id', 'channel NAME', 'CHANNEL DESCRIPTION',
+        priority: Priority.high, importance: Importance.max);
+    var iOS = new IOSNotificationDetails();
+    var platform = new NotificationDetails(android: android, iOS: iOS);
+    await flutterLocalNotificationsPlugin
+        .show(0, 'Add Item', 'New item', platform, payload: 'La');
+  }
+
+  Future onSelectNotification(String payload) {
+    debugPrint("payload : $payload");
+    showDialog(
+      context: context,
+      builder: (_) => new AlertDialog(
+        title: new Text('Notification'),
+        content: new Text('$payload'),
       ),
     );
   }
