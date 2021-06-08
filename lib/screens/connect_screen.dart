@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
 import 'package:mailbot_app/logic/savedata.dart';
 import 'package:mailbot_app/screens/home_screen.dart';
+import 'package:mailbot_app/screens/registration_screen.dart';
 
 class ConnectToMailbot extends StatefulWidget {
   @override
@@ -12,6 +13,8 @@ class ConnectToMailbot extends StatefulWidget {
 
 class _ConnectToMailbotState extends State<ConnectToMailbot> {
   final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController1 = TextEditingController();
+
   bool connected = false;
   var sql = DAO();
   @override
@@ -19,20 +22,22 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
     super.dispose();
 
     _textEditingController.dispose();
+    _textEditingController1.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.grey[350],
-        // appBar: AppBar(
-        //   backgroundColor: Colors.white,
-        // ),
+        appBar: AppBar(
+          backgroundColor: Colors.grey[350],
+          elevation: 0,
+        ),
         body: SingleChildScrollView(
           child: Center(
             child: Column(children: [
               Container(
-                height: 150,
+                height: 10,
               ),
               Text(
                 'Connect to MailBot',
@@ -55,15 +60,35 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
                   top: 15,
                   left: 35,
                   right: 35,
-                  bottom: 100,
                 ),
                 child: TextField(
                   controller: _textEditingController,
                   decoration: InputDecoration(hintText: 'Enter it here'),
                 ),
               ),
+              SizedBox(
+                height: 10,
+              ),
               Container(
-                width: 100,
+                padding: EdgeInsets.only(right: 240, top: 50),
+                child: Text('Config ID',
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              ),
+              Container(
+                padding: EdgeInsets.only(
+                  top: 15,
+                  left: 35,
+                  right: 35,
+                  bottom: 50,
+                ),
+                child: TextField(
+                  controller: _textEditingController1,
+                  decoration: InputDecoration(hintText: 'Enter it here'),
+                ),
+              ),
+              Container(
+                width: 200,
                 height: 50,
                 child: ElevatedButton(
                   style: ButtonStyle(
@@ -75,39 +100,62 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
                   ),
                   onPressed: () async {
                     await sql
-                        .login(_textEditingController.text)
+                        .login(_textEditingController.text,
+                            _textEditingController1.text)
                         .then((value) async {
                       if (value.email != null) {
-                        print(value.serialNum.toString());
                         connected = true;
-                      }
-                      if (connected) {
-                        EdgeAlert.show(
-                          context,
-                          title: 'Connnected',
-                          icon: Icons.done,
-                          backgroundColor: Colors.green,
-                          gravity: EdgeAlert.TOP,
-                        );
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return HomeScreen();
-                          }),
-                        );
-                      } else {
-                        EdgeAlert.show(
-                          context,
-                          title: 'Faild To Connect',
-                          icon: Icons.error,
-                          backgroundColor: Colors.red,
-                          gravity: EdgeAlert.TOP,
-                        );
+                        if (connected) {
+                          EdgeAlert.show(
+                            context,
+                            title: 'Connnected',
+                            icon: Icons.done,
+                            backgroundColor: Colors.green,
+                            gravity: EdgeAlert.TOP,
+                          );
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) {
+                              return HomeScreen(
+                                serialNum: value.serialNum.toString(),
+                              );
+                            }),
+                          );
+                        } else {
+                          EdgeAlert.show(
+                            context,
+                            title: 'Faild To Connect',
+                            icon: Icons.error,
+                            backgroundColor: Colors.red,
+                            gravity: EdgeAlert.TOP,
+                          );
+                        }
                       }
                     });
                   },
                 ),
-              )
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return Register();
+                    }),
+                  );
+                },
+                child: Text(
+                  "Register",
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ]),
           ),
         ));

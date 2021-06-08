@@ -36,7 +36,8 @@ class DAO {
         result.add(DItem(
             id: element.fields['orderNum'].toString(),
             title: element.fields['Title'],
-            time: element.fields['Arrival_time']));
+            time: element.fields['Arrival_time'],
+            status: element.fields['delivery_status']));
       });
     });
     return result;
@@ -65,21 +66,30 @@ class DAO {
     return ret;
   }
 
-  Future<UserModel> login(String serialNum) async {
+  Future<UserModel> login(String serialNum, String configCode) async {
     var user = UserModel();
     var ddb = await db.getConnection();
-    await ddb.query("SELECT * FROM `User` WHERE mailbot_serialNum = ?",
-        [serialNum]).then((results) {
+    var check = false;
+    await ddb.query(
+        "SELECT * FROM `Mailbot` WHERE `serial_num` = ? AND `config_code` = ?",
+        [serialNum, configCode]).then((results) {
       if (results.length == 1) {
-        results.forEach((element) async {
-          user = UserModel(
-              userID: element.fields['userID'],
-              email: element.fields['email'],
-              serialNum: element.fields['mailbot_serialNum']);
-        });
+        check = true;
       }
     });
-
+    if (check) {
+      await ddb.query("SELECT * FROM `User` WHERE mailbot_serialNum = ?",
+          [serialNum]).then((results) {
+        if (results.length == 1) {
+          results.forEach((element) async {
+            user = UserModel(
+                userID: element.fields['userID'],
+                email: element.fields['email'],
+                serialNum: element.fields['mailbot_serialNum']);
+          });
+        }
+      });
+    }
     return user;
   }
 
@@ -114,6 +124,44 @@ class DAO {
             ret = 'email changed';
           } else {
             ret = 'error';
+          }
+        });
+      });
+    }
+    return ret;
+  }
+
+  Future<String> editPass(
+      String serialNum, String oldPassword, String newPassword) async {
+    String ret = '';
+    bool re = false;
+    bool notUsed = false;
+    var ddb = await db.getConnection();
+    await ddb.query("SELECT login_pw FROM User WHERE mailbot_serialNum = ?",
+        [serialNum]).then((results) {
+      re = results.isNotEmpty;
+      if (re) {
+        results.forEach((element) async {
+          if (element.fields['login_pw'] == oldPassword) {
+            await ddb.query(
+                "UPDATE User SET login_pw = ?  WHERE mailbot_serialNum =?",
+                [newPassword, serialNum]);
+          } else {
+            ret = 'Check old password';
+          }
+        });
+      }
+    });
+
+    if (re) {
+      await ddb.query(
+          "SELECT `login_pw` FROM `User` WHERE `mailbot_serialNum` = ?",
+          [serialNum]).then((results) {
+        results.forEach((element) {
+          if (element.fields['login_pw'].toString() == newPassword) {
+            ret = 'password changed';
+          } else {
+            ret = 'password not changed';
           }
         });
       });

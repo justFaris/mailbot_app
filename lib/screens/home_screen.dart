@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
 import 'package:mailbot_app/logic/savedata.dart';
@@ -11,23 +12,36 @@ import 'camera_his_screen.dart';
 import 'delivery_his_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key}) : super(key: key);
+  final String serialNum;
+  HomeScreen({this.serialNum});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState(serialNum);
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String serialNum;
+  _HomeScreenState(this.serialNum);
   List<DItem> items = [];
   var sql = DAO();
-  var serial = "";
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
+  var itemsLength = 0;
   @override
   void initState() {
     sql.getItems().then((value) {
       setState(() {
         items = value;
+        itemsLength = value.length;
+      });
+    });
+    new Timer.periodic(Duration(seconds: 20), (t) {
+      sql.getItems().then((value) {
+        if (itemsLength != value.length) {
+          showNotification();
+          setState(() {
+            itemsLength = value.length;
+          });
+        }
       });
     });
     super.initState();
@@ -51,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                serial,
+                serialNum,
                 style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 16,
@@ -152,7 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return SettingsScreen();
+                    return SettingsScreen(
+                      serialNum: serialNum,
+                    );
                   }),
                 );
               },
@@ -181,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.grey[350],
         elevation: 0,
         title: Text(
-          'MailBot Serial Number',
+          serialNum,
           style: TextStyle(color: Colors.grey[600]),
         ),
       ),
@@ -302,40 +318,52 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return DeliveryInfo();
-                          }),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20.0, top: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Item 1",
-                                style: TextStyle(
-                                  color: Colors.blueGrey,
-                                )),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Icon(
-                                Icons.info_outline,
-                                color: Colors.blueGrey,
-                              ),
+                child: ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (ctx, i) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20.0, top: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(items[itemsLength - 1].title,
+                                    style: TextStyle(
+                                      color: Colors.blueGrey,
+                                    )),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) {
+                                        return DeliveryInfo(
+                                          title: items[itemsLength - 1]
+                                              .title
+                                              .toString(),
+                                          num: items[itemsLength - 1]
+                                              .id
+                                              .toString(),
+                                          time: items[itemsLength - 1].time,
+                                        );
+                                      }),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: Icon(
+                                      Icons.info_outline,
+                                      color: Colors.blueGrey,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                          ),
+                        ],
+                      );
+                    }),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -368,6 +396,17 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void checkDatabase() async {
+    new Timer.periodic(Duration(seconds: 5), (Timer t) {
+      sql.getItems().then((value) {
+        setState(() {
+          itemsLength = value.length;
+        });
+      });
+      print(itemsLength);
+    });
   }
 
   showNotification() async {

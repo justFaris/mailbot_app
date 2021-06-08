@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DeliveryInfo extends StatefulWidget {
   final String title;
@@ -13,6 +14,8 @@ class DeliveryInfo extends StatefulWidget {
 class _DeliveryInfoState extends State<DeliveryInfo> {
   String title, num;
   DateTime time;
+  DateFormat Date = DateFormat('yyyy/MM/dd');
+  DateFormat timee = DateFormat('H:m:s');
   _DeliveryInfoState(this.title, this.num, this.time);
 
   @override
@@ -137,7 +140,7 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                     color: Colors.grey,
                   ),
                   child: Center(
-                    child: Text(time.toString()),
+                    child: Text(Date.format(time).toString()),
                   ),
                 ),
               ),
@@ -157,7 +160,7 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                     color: Colors.grey,
                   ),
                   child: Center(
-                    child: Text('DD/MM/YY'),
+                    child: Text(timee.format(time).toString()),
                   ),
                 ),
               ),

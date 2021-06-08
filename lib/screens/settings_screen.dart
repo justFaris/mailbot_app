@@ -3,13 +3,16 @@ import 'package:mailbot_app/screens/edit_email_screen.dart';
 import 'package:mailbot_app/screens/edit_pass_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
-  SettingsScreen({Key key}) : super(key: key);
+  final String serialNum;
+  SettingsScreen({this.serialNum});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  _SettingsScreenState createState() => _SettingsScreenState(serialNum);
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  String serialNum;
+  _SettingsScreenState(this.serialNum);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +79,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) {
-                        return EditPasswordScreen();
+                        return EditPasswordScreen(
+                          serialNum: serialNum,
+                        );
                       }),
                     );
                   },

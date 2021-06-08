@@ -27,12 +27,17 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.grey[350],
+        appBar: AppBar(
+          backgroundColor: Colors.grey[350],
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.blueGrey),
+        ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Center(
               child: Column(children: [
                 Container(
-                  height: 150,
+                  height: 10,
                 ),
                 Text(
                   'MailBot',

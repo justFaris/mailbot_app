@@ -4,13 +4,16 @@ import 'package:mailbot_app/logic/DAO.dart';
 import 'package:mailbot_app/logic/User.dart';
 
 class EditPasswordScreen extends StatefulWidget {
-  EditPasswordScreen({Key key}) : super(key: key);
+  final String serialNum;
+  EditPasswordScreen({this.serialNum});
 
   @override
-  _EditPasswordScreenState createState() => _EditPasswordScreenState();
+  _EditPasswordScreenState createState() => _EditPasswordScreenState(serialNum);
 }
 
 class _EditPasswordScreenState extends State<EditPasswordScreen> {
+  String serialNum;
+  _EditPasswordScreenState(this.serialNum);
   final TextEditingController _textEditingController1 = TextEditingController();
   final TextEditingController _textEditingController2 = TextEditingController();
   var sql = DAO();
@@ -89,8 +92,42 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                     if (_textEditingController2.text.isNotEmpty) {
                       if (_textEditingController1.text !=
                           _textEditingController2.text) {
-                        print(
-                            User(password: _textEditingController2.text).hash);
+                        sql
+                            .editPass(
+                                serialNum,
+                                User(password: _textEditingController1.text)
+                                    .hash
+                                    .toString(),
+                                User(password: _textEditingController2.text)
+                                    .hash
+                                    .toString())
+                            .then((value) {
+                          if (value == 'password changed') {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Password Changed Successfully',
+                              icon: Icons.done,
+                              backgroundColor: Colors.green,
+                              gravity: EdgeAlert.TOP,
+                            );
+                          } else if (value == 'password not changed') {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Password not changed',
+                              icon: Icons.error,
+                              backgroundColor: Colors.red,
+                              gravity: EdgeAlert.TOP,
+                            );
+                          } else {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Check your old password',
+                              icon: Icons.error,
+                              backgroundColor: Colors.red,
+                              gravity: EdgeAlert.TOP,
+                            );
+                          }
+                        });
                       } else {
                         EdgeAlert.show(
                           context,
