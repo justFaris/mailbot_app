@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/screens/connect_screen.dart';
-import 'package:mailbot_app/screens/home_screen.dart';
-import 'package:mailbot_app/screens/registration_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

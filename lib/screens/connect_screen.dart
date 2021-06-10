@@ -2,7 +2,6 @@ import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
-import 'package:mailbot_app/logic/savedata.dart';
 import 'package:mailbot_app/screens/home_screen.dart';
 import 'package:mailbot_app/screens/registration_screen.dart';
 
@@ -117,6 +116,7 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
                             context,
                             MaterialPageRoute(builder: (context) {
                               return HomeScreen(
+                                userID: value.userID.toString(),
                                 serialNum: value.serialNum.toString(),
                               );
                             }),

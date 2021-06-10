@@ -1,7 +1,6 @@
 import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
-import 'package:mailbot_app/logic/User.dart';
 
 class EditEmailScreen extends StatefulWidget {
   EditEmailScreen({Key key}) : super(key: key);

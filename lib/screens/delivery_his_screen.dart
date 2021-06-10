@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mailbot_app/logic/DAO.dart';
+import 'package:mailbot_app/models/dileveryitemmodel.dart';
 
 import 'delivery_info_screen.dart';
 
@@ -9,7 +11,34 @@ class DeliveryHistory extends StatefulWidget {
 
 class _DeliveryHistoryState extends State<DeliveryHistory> {
   final TextEditingController _textEditingController1 = TextEditingController();
-  bool value = false;
+  List<DItem> items = [];
+  List<DItem> _searchResult = [];
+  var sql = DAO();
+  @override
+  void initState() {
+    sql.getItems().then((value) {
+      setState(() {
+        items = value;
+      });
+    });
+    super.initState();
+  }
+
+  onChanged(String value) {
+    _searchResult.clear();
+    if (value.isEmpty) {
+      setState(() {});
+      return;
+    }
+
+    items.forEach((itemsDetail) {
+      if (itemsDetail.id.contains(value)) {
+        setState(() {
+          _searchResult.add(itemsDetail);
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +70,8 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
                 children: [
                   Flexible(
                       child: TextField(
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => onChanged(value),
                     controller: _textEditingController1,
                     decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
@@ -53,7 +84,6 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
                       hintText: 'Order Number',
                     ),
                   )),
-                  IconButton(icon: Icon(Icons.search), onPressed: () {})
                 ],
               ),
               SizedBox(
@@ -65,53 +95,120 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                 ),
-                child: ListView.builder(
-                    itemCount: 50,
-                    itemBuilder: (ctx, i) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.info_outline,
-                                      color: Colors.blue,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) {
-                                          return DeliveryInfo();
+                child: _searchResult.length != 0 ||
+                        _textEditingController1.text.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: _searchResult.length,
+                        itemBuilder: (ctx, i) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                        icon: Icon(
+                                          Icons.info_outline,
+                                          color: Colors.blue,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                              return DeliveryInfo(
+                                                title: _searchResult[i].title,
+                                                time: _searchResult[i].time,
+                                                num: _searchResult[i].id,
+                                              );
+                                            }),
+                                          );
                                         }),
-                                      );
-                                    }),
-                                Text(
-                                  'Item ${i + 1}',
-                                  style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold),
+                                    Expanded(
+                                      child: Text(
+                                        _searchResult[i].id.toString(),
+                                        style: TextStyle(
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Text(
+                                      _searchResult[i].time.toString(),
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  'dd/mm/yy 00:00AM',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                  ),
+                              ),
+                              Divider(
+                                indent: 15,
+                                endIndent: 15,
+                                thickness: 1,
+                              ),
+                            ],
+                          );
+                        })
+                    : ListView.builder(
+                        itemCount: items.length,
+                        itemBuilder: (ctx, i) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                        icon: Icon(
+                                          Icons.info_outline,
+                                          color: Colors.blue,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                              return DeliveryInfo(
+                                                title: items[i].title,
+                                                time: items[i].time,
+                                                num: items[i].id,
+                                              );
+                                            }),
+                                          );
+                                        }),
+                                    Expanded(
+                                      child: Text(
+                                        items[i].id.toString(),
+                                        style: TextStyle(
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Text(
+                                      items[i].time.toString(),
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            indent: 15,
-                            endIndent: 15,
-                            thickness: 1,
-                          ),
-                        ],
-                      );
-                    }),
+                              ),
+                              Divider(
+                                indent: 15,
+                                endIndent: 15,
+                                thickness: 1,
+                              ),
+                            ],
+                          );
+                        }),
               ),
             ],
           ),

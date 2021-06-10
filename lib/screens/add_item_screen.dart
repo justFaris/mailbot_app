@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:mailbot_app/logic/DAO.dart';
 
 class AddItem extends StatefulWidget {
+  final String userID;
+
+  const AddItem({this.userID});
   @override
-  _AddItemState createState() => _AddItemState();
+  _AddItemState createState() => _AddItemState(userID);
 }
 
 class _AddItemState extends State<AddItem> {
+  String userID;
+  _AddItemState(this.userID);
+  var sql = DAO();
   final TextEditingController _textEditingController1 = TextEditingController();
   final TextEditingController _textEditingController2 = TextEditingController();
   bool value = false;
@@ -49,6 +56,7 @@ class _AddItemState extends State<AddItem> {
                   elevation: 10,
                   child: TextField(
                     controller: _textEditingController1,
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -65,6 +73,7 @@ class _AddItemState extends State<AddItem> {
                   elevation: 10,
                   child: TextField(
                     controller: _textEditingController2,
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -122,14 +131,15 @@ class _AddItemState extends State<AddItem> {
                     'OK',
                     style: TextStyle(fontSize: 20),
                   ),
-                  onPressed: () {
-                    print('ok');
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) {
-                    //     return SuccessfullyReg(_textEditingController);
-                    //   }),
-                    // );
+                  onPressed: () async {
+                    print(userID);
+                    await sql.insertItem(
+                        int.parse(userID),
+                        int.parse(_textEditingController2.text),
+                        value == true ? 1 : 0,
+                        value2 == true ? 1 : 0,
+                        _textEditingController1.text);
+                    Navigator.of(context).pop();
                   },
                 ),
               )

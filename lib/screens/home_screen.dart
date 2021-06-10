@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
-import 'package:mailbot_app/logic/savedata.dart';
 import 'package:mailbot_app/models/dileveryitemmodel.dart';
 import 'package:mailbot_app/screens/add_item_screen.dart';
 import 'package:mailbot_app/screens/delivery_info_screen.dart';
@@ -13,19 +12,24 @@ import 'delivery_his_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String serialNum;
-  HomeScreen({this.serialNum});
+  final String userID;
+  HomeScreen({this.serialNum, this.userID});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState(serialNum);
+  _HomeScreenState createState() => _HomeScreenState(serialNum, userID);
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   String serialNum;
-  _HomeScreenState(this.serialNum);
+  String userID;
+  _HomeScreenState(this.serialNum, this.userID);
+  final TextEditingController _textEditingController1 = TextEditingController();
   List<DItem> items = [];
+  List<DItem> _searchResult = [];
   var sql = DAO();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   var itemsLength = 0;
+
   @override
   void initState() {
     sql.getItems().then((value) {
@@ -34,9 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
         itemsLength = value.length;
       });
     });
-    new Timer.periodic(Duration(seconds: 20), (t) {
+    new Timer.periodic(Duration(seconds: 10), (t) {
       sql.getItems().then((value) {
-        if (itemsLength != value.length) {
+        items = value;
+        if (itemsLength != value.length && itemsLength <= value.length) {
           showNotification();
           setState(() {
             itemsLength = value.length;
@@ -51,6 +56,22 @@ class _HomeScreenState extends State<HomeScreen> {
     var initSetttings = new InitializationSettings(android: android, iOS: iOS);
     flutterLocalNotificationsPlugin.initialize(initSetttings,
         onSelectNotification: onSelectNotification);
+  }
+
+  onChanged(String value) {
+    _searchResult.clear();
+    if (value.isEmpty) {
+      setState(() {});
+      return;
+    }
+
+    items.forEach((itemsDetail) {
+      if (itemsDetail.title.contains(value)) {
+        setState(() {
+          _searchResult.add(itemsDetail);
+        });
+      }
+    });
   }
 
   Widget build(BuildContext context) {
@@ -81,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return AddItem();
+                    return AddItem(userID: userID);
                   }),
                 );
               },
@@ -205,19 +226,24 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.search,
-                          color: Colors.blueGrey,
-                        ),
-                        onPressed: () {}),
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: 30.0, left: 20.0, right: 20.0),
+                child: Flexible(
+                    child: TextField(
+                  keyboardType: TextInputType.text,
+                  onChanged: (value) => onChanged(value),
+                  controller: _textEditingController1,
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black, width: 1.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black12, width: 1.0),
+                    ),
+                    hintText: 'Order Title',
                   ),
-                ],
+                )),
               ),
               Divider(
                 indent: 20,
@@ -243,7 +269,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.blueGrey,
                       ),
                       onPressed: () {
-                        showNotification();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return AddItem(userID: userID);
+                          }),
+                        );
                       })
                 ],
               ),
@@ -253,42 +284,81 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                 ),
-                child: ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (ctx, i) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) {
-                                  return DeliveryInfo(
-                                    title: items[i].title.toString(),
-                                    num: items[i].id.toString(),
-                                    time: items[i].time,
+                child: _searchResult.length != 0 ||
+                        _textEditingController1.text.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: _searchResult.length,
+                        itemBuilder: (ctx, i) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) {
+                                      return DeliveryInfo(
+                                        title:
+                                            _searchResult[i].title.toString(),
+                                        num: _searchResult[i].id.toString(),
+                                        time: _searchResult[i].time,
+                                      );
+                                    }),
                                   );
-                                }),
-                              );
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, top: 10),
-                              child: Text(items[i].title,
-                                  style: TextStyle(
-                                    color: Colors.blueGrey,
-                                  )),
-                            ),
-                          ),
-                          Divider(
-                            indent: 15,
-                            endIndent: 15,
-                            thickness: 1,
-                          ),
-                        ],
-                      );
-                    }),
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20.0, top: 10),
+                                  child: Text(_searchResult[i].title,
+                                      style: TextStyle(
+                                        color: Colors.blueGrey,
+                                      )),
+                                ),
+                              ),
+                              Divider(
+                                indent: 15,
+                                endIndent: 15,
+                                thickness: 1,
+                              ),
+                            ],
+                          );
+                        })
+                    : ListView.builder(
+                        itemCount: items.length,
+                        itemBuilder: (ctx, i) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) {
+                                      return DeliveryInfo(
+                                        title: items[i].title.toString(),
+                                        num: items[i].id.toString(),
+                                        time: items[i].time,
+                                      );
+                                    }),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20.0, top: 10),
+                                  child: Text(items[i].title,
+                                      style: TextStyle(
+                                        color: Colors.blueGrey,
+                                      )),
+                                ),
+                              ),
+                              Divider(
+                                indent: 15,
+                                endIndent: 15,
+                                thickness: 1,
+                              ),
+                            ],
+                          );
+                        }),
               ),
               SizedBox(
                 height: 20,
@@ -329,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(items[itemsLength - 1].title,
+                                Text(items.first.title,
                                     style: TextStyle(
                                       color: Colors.blueGrey,
                                     )),
@@ -339,13 +409,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       context,
                                       MaterialPageRoute(builder: (context) {
                                         return DeliveryInfo(
-                                          title: items[itemsLength - 1]
-                                              .title
-                                              .toString(),
-                                          num: items[itemsLength - 1]
-                                              .id
-                                              .toString(),
-                                          time: items[itemsLength - 1].time,
+                                          title: items.first.title.toString(),
+                                          num: items.first.id.toString(),
+                                          time: items.first.time,
                                         );
                                       }),
                                     );
@@ -398,34 +464,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void checkDatabase() async {
-    new Timer.periodic(Duration(seconds: 5), (Timer t) {
-      sql.getItems().then((value) {
-        setState(() {
-          itemsLength = value.length;
-        });
-      });
-      print(itemsLength);
-    });
-  }
-
   showNotification() async {
     var android = new AndroidNotificationDetails(
         'channel id', 'channel NAME', 'CHANNEL DESCRIPTION',
         priority: Priority.high, importance: Importance.max);
     var iOS = new IOSNotificationDetails();
     var platform = new NotificationDetails(android: android, iOS: iOS);
-    await flutterLocalNotificationsPlugin
-        .show(0, 'Add Item', 'New item', platform, payload: 'La');
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Mailbot', 'New item was added', platform,
+        payload: 'New item was added');
   }
 
-  Future onSelectNotification(String payload) {
+  Future onSelectNotification(String payload) async {
     debugPrint("payload : $payload");
     showDialog(
       context: context,
       builder: (_) => new AlertDialog(
         title: new Text('Notification'),
         content: new Text('$payload'),
+        actions: [],
       ),
     );
   }

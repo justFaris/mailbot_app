@@ -14,7 +14,7 @@ class DeliveryInfo extends StatefulWidget {
 class _DeliveryInfoState extends State<DeliveryInfo> {
   String title, num;
   DateTime time;
-  DateFormat Date = DateFormat('yyyy/MM/dd');
+  DateFormat date = DateFormat('yyyy/MM/dd');
   DateFormat timee = DateFormat('H:m:s');
   _DeliveryInfoState(this.title, this.num, this.time);
 
@@ -140,7 +140,7 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                     color: Colors.grey,
                   ),
                   child: Center(
-                    child: Text(Date.format(time).toString()),
+                    child: Text(date.format(time).toString()),
                   ),
                 ),
               ),

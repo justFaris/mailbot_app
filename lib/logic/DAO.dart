@@ -43,6 +43,17 @@ class DAO {
     return result;
   }
 
+  Future<String> insertItem(int userID, int orderNum, int moneyPocket,
+      int autoEmpty, String title) async {
+    String result = '';
+    var ddb = await db.getConnection();
+    await ddb.query(
+        "INSERT INTO Delivery (orderNum, money_pocket, auto_empty, Title) VALUES (?, ?, ?, ?)",
+        [orderNum, moneyPocket, autoEmpty, title]);
+    // await ddb.query("INSERT INTO has_delivery (userID, orderNum) VALUES (?, ?)", [userID, orderNum]);
+    return result;
+  }
+
   Future<String> insertUser(User user) async {
     String ret = '';
     var ddb = await db.getConnection();
@@ -135,7 +146,6 @@ class DAO {
       String serialNum, String oldPassword, String newPassword) async {
     String ret = '';
     bool re = false;
-    bool notUsed = false;
     var ddb = await db.getConnection();
     await ddb.query("SELECT login_pw FROM User WHERE mailbot_serialNum = ?",
         [serialNum]).then((results) {
