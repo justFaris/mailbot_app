@@ -13,16 +13,22 @@ import 'delivery_his_screen.dart';
 class HomeScreen extends StatefulWidget {
   final String serialNum;
   final String userID;
-  HomeScreen({this.serialNum, this.userID});
+  final String email;
+  HomeScreen({
+    this.serialNum,
+    this.userID,
+    this.email,
+  });
 
   @override
-  _HomeScreenState createState() => _HomeScreenState(serialNum, userID);
+  _HomeScreenState createState() => _HomeScreenState(serialNum, userID, email);
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   String serialNum;
   String userID;
-  _HomeScreenState(this.serialNum, this.userID);
+  String email;
+  _HomeScreenState(this.serialNum, this.userID, this.email);
   final TextEditingController _textEditingController1 = TextEditingController();
   List<DItem> items = [];
   List<DItem> _searchResult = [];
@@ -148,7 +154,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return CameraHisScreen();
+                    return CameraHisScreen(
+                      email: email,
+                    );
                   }),
                 );
               },

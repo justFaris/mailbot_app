@@ -118,6 +118,7 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
                               return HomeScreen(
                                 userID: value.userID.toString(),
                                 serialNum: value.serialNum.toString(),
+                                email: value.email.toString(),
                               );
                             }),
                           );

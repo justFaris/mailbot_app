@@ -1,5 +1,6 @@
 import 'package:mailbot_app/logic/User.dart';
 import 'package:mailbot_app/logic/mysql.dart';
+import 'package:mailbot_app/models/camerahistory.dart';
 import 'package:mailbot_app/models/dileveryitemmodel.dart';
 import 'package:mailbot_app/models/usermodel.dart';
 
@@ -38,6 +39,24 @@ class DAO {
             title: element.fields['Title'],
             time: element.fields['Arrival_time'],
             status: element.fields['delivery_status']));
+      });
+    });
+    return result;
+  }
+
+  Future<List<CameraHisModel>> getCameraHistory(String email) async {
+    List<CameraHisModel> result = [];
+    var ddb = await db.getConnection();
+    await ddb.query("select * from user_rec where email = ?", [email]).then(
+        (results) {
+      results.forEach((element) async {
+        result.add(CameraHisModel(
+          recDate: element.fields['rec_date'],
+          recTime: element.fields['rec_time'],
+          orderNum: element.fields['orderNum'],
+          recordingID: element.fields['recording_ID'],
+          url: element.fields['URL'],
+        ));
       });
     });
     return result;
