@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/BO.dart';
 import 'package:mailbot_app/logic/DAO.dart';
 import 'package:mailbot_app/logic/User.dart';
-import 'package:mailbot_app/screens/login_screen.dart';
+import 'package:mailbot_app/screens/connect_screen.dart';
+import 'package:mailbot_app/screens/registration_screen.dart';
 
-class Register extends StatefulWidget {
+class Login extends StatefulWidget {
   @override
-  _RegisterState createState() => _RegisterState();
+  _LoginState createState() => _LoginState();
 }
 
-class _RegisterState extends State<Register> {
+class _LoginState extends State<Login> {
   var _textEditingController = new TextEditingController();
   var _textEditingController3 = new TextEditingController();
   var sql = DAO();
@@ -58,7 +59,7 @@ class _RegisterState extends State<Register> {
                   height: 10,
                 ),
                 Text(
-                  'Register your MailBot now.',
+                  'Login',
                   style: TextStyle(fontSize: 15),
                 ),
                 Container(
@@ -101,21 +102,25 @@ class _RegisterState extends State<Register> {
                         backgroundColor:
                             MaterialStateProperty.all(Colors.blueGrey)),
                     child: Text(
-                      'Register',
+                      'Login',
                       style: TextStyle(fontSize: 14),
                     ),
                     onPressed: () {
                       if (_textEditingController.text.length != 0 ||
                           _textEditingController3.text.length != 0) {
                         sql
-                            .insertUser(User(
-                                mail: _textEditingController.text,
-                                password: _textEditingController3.text))
+                            .loginC(
+                          User(password: _textEditingController3.text)
+                              .hash
+                              .toString(),
+                          _textEditingController.text,
+                        )
                             .then((value) {
-                          if (value == 'Inserted user succesfullly') {
+                          if (value != 'false') {
+                            print(value);
                             EdgeAlert.show(
                               context,
-                              title: 'Registerd',
+                              title: 'Logged in Successfully',
                               icon: Icons.done,
                               backgroundColor: Colors.green,
                               gravity: EdgeAlert.TOP,
@@ -123,22 +128,15 @@ class _RegisterState extends State<Register> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(builder: (context) {
-                                return Login();
+                                return ConnectToMailbot(
+                                  serial: value,
+                                );
                               }),
-                            );
-                          }
-                          if (value == 'email exists') {
-                            EdgeAlert.show(
-                              context,
-                              title: 'Email is already exists',
-                              icon: Icons.error,
-                              backgroundColor: Colors.red,
-                              gravity: EdgeAlert.TOP,
                             );
                           } else {
                             EdgeAlert.show(
                               context,
-                              title: 'Faild to register',
+                              title: 'Faild to Login',
                               icon: Icons.error,
                               backgroundColor: Colors.red,
                               gravity: EdgeAlert.TOP,
@@ -148,7 +146,7 @@ class _RegisterState extends State<Register> {
                       } else {
                         EdgeAlert.show(
                           context,
-                          title: 'Faild To Register',
+                          title: 'Faild To Login',
                           icon: Icons.error,
                           backgroundColor: Colors.red,
                           gravity: EdgeAlert.TOP,
@@ -162,12 +160,12 @@ class _RegisterState extends State<Register> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) {
-                        return Login();
+                        return Register();
                       }),
                     );
                   },
                   child: Text(
-                    "Login",
+                    "Register",
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 20.0,

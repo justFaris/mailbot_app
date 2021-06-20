@@ -6,7 +6,6 @@ import 'package:mailbot_app/screens/add_item_screen.dart';
 import 'package:mailbot_app/screens/delivery_info_screen.dart';
 import 'package:mailbot_app/screens/settings_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import 'camera_his_screen.dart';
 import 'delivery_his_screen.dart';
 

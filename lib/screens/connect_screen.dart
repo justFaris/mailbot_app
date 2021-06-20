@@ -3,14 +3,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
 import 'package:mailbot_app/screens/home_screen.dart';
-import 'package:mailbot_app/screens/registration_screen.dart';
 
 class ConnectToMailbot extends StatefulWidget {
+  final String serial;
+
+  const ConnectToMailbot({this.serial});
   @override
-  _ConnectToMailbotState createState() => _ConnectToMailbotState();
+  _ConnectToMailbotState createState() => _ConnectToMailbotState(serial);
 }
 
 class _ConnectToMailbotState extends State<ConnectToMailbot> {
+  String serial;
+  _ConnectToMailbotState(this.serial);
   final TextEditingController _textEditingController = TextEditingController();
   final TextEditingController _textEditingController1 = TextEditingController();
 
@@ -103,7 +107,9 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
                             _textEditingController1.text)
                         .then((value) async {
                       if (value.email != null) {
-                        connected = true;
+                        if (value.serialNum == serial) {
+                          connected = true;
+                        }
                         if (connected) {
                           EdgeAlert.show(
                             context,
@@ -138,24 +144,6 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
               ),
               SizedBox(
                 height: 10,
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return Register();
-                    }),
-                  );
-                },
-                child: Text(
-                  "Register",
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
               ),
             ]),
           ),
