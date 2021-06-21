@@ -30,20 +30,27 @@ class _HomeScreenState extends State<HomeScreen> {
   _HomeScreenState(this.serialNum, this.userID, this.email);
   final TextEditingController _textEditingController1 = TextEditingController();
   List<DItem> items = [];
-    List<DItem> ditems = [];
+  List<DItem> ditems = [];
   List<DItem> _searchResult = [];
   var sql = DAO();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   var itemsLength = 0;
   var dLength = 0;
+  var invalidLength = 0;
   @override
   void initState() {
+    sql.checkValidWeightSize().then((value) {
+      setState(() {
+        invalidLength = value.length;
+      });
+    });
     sql.getPendingItems().then((value) {
       setState(() {
         items = value;
         itemsLength = value.length;
       });
-    }); sql.getAllItems().then((value) {
+    });
+    sql.getAllItems().then((value) {
       setState(() {
         ditems = value;
         dLength = value.length;
@@ -56,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
         sql.getAllItems().then((value2) {
           setState(() {
-            ditems= value2;
+            ditems = value2;
             dLength = value2.length;
           });
           if (itemsLength != value.length && itemsLength <= value.length) {
@@ -70,6 +77,14 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           }
         });
+      });
+      sql.checkValidWeightSize().then((value) {
+        if (invalidLength != value.length && invalidLength <= value.length) {
+          setState(() {
+            invalidLength = value.length;
+          });
+          showNotification('Invalid Item', 'Item Weight or Size Invalid');
+        }
       });
     });
     super.initState();

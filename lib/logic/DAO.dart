@@ -46,6 +46,24 @@ class DAO {
     return result;
   }
 
+  Future<List<DItem>> checkValidWeightSize() async {
+    List<DItem> result = [];
+    var ddb = await db.getConnection();
+    await ddb
+        .query(
+            "SELECT * FROM `Delivery` WHERE `weight` = 'invalid' or `size` = 'invalid'")
+        .then((results) {
+      results.forEach((element) async {
+        result.add(DItem(
+            id: element.fields['orderNum'].toString(),
+            title: element.fields['Title'],
+            time: element.fields['Arrival_time'],
+            status: element.fields['delivery_status']));
+      });
+    });
+    return result;
+  }
+
   Future<List<DItem>> getAllItems() async {
     List<DItem> result = [];
     var ddb = await db.getConnection();

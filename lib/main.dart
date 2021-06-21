@@ -8,6 +8,7 @@ const simplePeriodicTask = "simplePeriodicTask";
 var sql = DAO();
 var itemsLength = 0;
 var dLength = 0;
+var invalidLength = 0;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 Future<void> main() async {
@@ -38,6 +39,12 @@ void callbackDispatcher() {
           }
         }
       });
+    });
+    sql.checkValidWeightSize().then((value) {
+      invalidLength = value.length;
+      if (invalidLength != value.length && invalidLength <= value.length) {
+        showNotification('Invalid Item', 'Item Weight or Size Invalid');
+      }
     });
     return Future.value(true);
   });
