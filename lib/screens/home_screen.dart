@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _HomeScreenState(this.serialNum, this.userID, this.email);
   final TextEditingController _textEditingController1 = TextEditingController();
   List<DItem> items = [];
+    List<DItem> ditems = [];
   List<DItem> _searchResult = [];
   var sql = DAO();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -42,6 +43,11 @@ class _HomeScreenState extends State<HomeScreen> {
         items = value;
         itemsLength = value.length;
       });
+    }); sql.getAllItems().then((value) {
+      setState(() {
+        ditems = value;
+        dLength = value.length;
+      });
     });
     new Timer.periodic(Duration(seconds: 10), (t) {
       sql.getPendingItems().then((value) {
@@ -50,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
         sql.getAllItems().then((value2) {
           setState(() {
+            ditems= value2;
             dLength = value2.length;
           });
           if (itemsLength != value.length && itemsLength <= value.length) {
@@ -417,7 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(items.first.title,
+                                Text(ditems.first.title,
                                     style: TextStyle(
                                       color: Colors.blueGrey,
                                     )),
@@ -427,9 +434,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       context,
                                       MaterialPageRoute(builder: (context) {
                                         return DeliveryInfo(
-                                          title: items.first.title.toString(),
-                                          num: items.first.id.toString(),
-                                          time: items.first.time,
+                                          title: ditems.first.title.toString(),
+                                          num: ditems.first.id.toString(),
+                                          time: ditems.first.time,
                                         );
                                       }),
                                     );
