@@ -16,7 +16,7 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
   var sql = DAO();
   @override
   void initState() {
-    sql.getItems().then((value) {
+    sql.getAllItems().then((value) {
       setState(() {
         items = value;
       });

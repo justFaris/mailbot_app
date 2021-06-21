@@ -34,24 +34,35 @@ class _HomeScreenState extends State<HomeScreen> {
   var sql = DAO();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   var itemsLength = 0;
-
+  var dLength = 0;
   @override
   void initState() {
-    sql.getItems().then((value) {
+    sql.getPendingItems().then((value) {
       setState(() {
         items = value;
         itemsLength = value.length;
       });
     });
     new Timer.periodic(Duration(seconds: 10), (t) {
-      sql.getItems().then((value) {
-        items = value;
-        if (itemsLength != value.length && itemsLength <= value.length) {
-          showNotification();
+      sql.getPendingItems().then((value) {
+        setState(() {
+          items = value;
+        });
+        sql.getAllItems().then((value2) {
           setState(() {
-            itemsLength = value.length;
+            dLength = value2.length;
           });
-        }
+          if (itemsLength != value.length && itemsLength <= value.length) {
+            if (dLength != value2.length && dLength >= value2.length) {
+              showNotification(
+                  'Item was Delivered', 'Item Delivered Successfully');
+              setState(() {
+                itemsLength = value.length;
+                dLength = value2.length;
+              });
+            }
+          }
+        });
       });
     });
     super.initState();
@@ -471,15 +482,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  showNotification() async {
+  showNotification(body, payload) async {
     var android = new AndroidNotificationDetails(
         'channel id', 'channel NAME', 'CHANNEL DESCRIPTION',
         priority: Priority.high, importance: Importance.max);
     var iOS = new IOSNotificationDetails();
     var platform = new NotificationDetails(android: android, iOS: iOS);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'Mailbot', 'New item was added', platform,
-        payload: 'New item was added');
+    await flutterLocalNotificationsPlugin.show(0, 'Mailbot', body, platform,
+        payload: payload);
   }
 
   Future onSelectNotification(String payload) async {

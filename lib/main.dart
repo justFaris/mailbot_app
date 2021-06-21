@@ -7,6 +7,7 @@ import 'package:workmanager/workmanager.dart';
 const simplePeriodicTask = "simplePeriodicTask";
 var sql = DAO();
 var itemsLength = 0;
+var dLength = 0;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 Future<void> main() async {
@@ -25,25 +26,31 @@ Future<void> main() async {
 
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    sql.getItems().then((value) {
-      if (itemsLength != value.length && itemsLength <= value.length) {
-        showNotification();
-        itemsLength = value.length;
-      }
+    sql.getPendingItems().then((value) {
+      itemsLength = value.length;
+
+      sql.getAllItems().then((value2) {
+        dLength = value2.length;
+        if (itemsLength != value.length && itemsLength <= value.length) {
+          if (dLength != value2.length && dLength >= value2.length) {
+            showNotification(
+                'Item was Delivered', 'Item Delivered Successfully');
+          }
+        }
+      });
     });
     return Future.value(true);
   });
 }
 
-showNotification() async {
+showNotification(body, payload) async {
   var android = new AndroidNotificationDetails(
       'channel id', 'channel NAME', 'CHANNEL DESCRIPTION',
       priority: Priority.high, importance: Importance.max);
   var iOS = new IOSNotificationDetails();
   var platform = new NotificationDetails(android: android, iOS: iOS);
-  await flutterLocalNotificationsPlugin.show(
-      0, 'Mailbot', 'New item was added', platform,
-      payload: 'New item was added');
+  await flutterLocalNotificationsPlugin.show(0, 'Mailbot', body, platform,
+      payload: payload);
 }
 
 class MyApp extends StatelessWidget {

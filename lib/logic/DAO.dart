@@ -29,10 +29,29 @@ class DAO {
     return result;
   }
 
-  Future<List<DItem>> getItems() async {
+  Future<List<DItem>> getPendingItems() async {
     List<DItem> result = [];
     var ddb = await db.getConnection();
-    await ddb.query("select * from Delivery").then((results) {
+    await ddb
+        .query("SELECT * FROM `Delivery` WHERE `delivery_status` = 'pending'")
+        .then((results) {
+      results.forEach((element) async {
+        result.add(DItem(
+            id: element.fields['orderNum'].toString(),
+            title: element.fields['Title'],
+            time: element.fields['Arrival_time'],
+            status: element.fields['delivery_status']));
+      });
+    });
+    return result;
+  }
+
+  Future<List<DItem>> getAllItems() async {
+    List<DItem> result = [];
+    var ddb = await db.getConnection();
+    await ddb
+        .query("SELECT * FROM `Delivery` WHERE `delivery_status` = 'Delivered'")
+        .then((results) {
       results.forEach((element) async {
         result.add(DItem(
             id: element.fields['orderNum'].toString(),
