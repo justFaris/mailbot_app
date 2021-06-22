@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/screens/edit_email_screen.dart';
 import 'package:mailbot_app/screens/edit_pass_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatefulWidget {
   final String serialNum;
@@ -105,7 +106,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     'e-manual',
                     style: TextStyle(fontSize: 20),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await launch(
+                      'https://justonebyte.net/E-manual.pdf',
+                    );
+                  },
                 ),
               ),
             ),

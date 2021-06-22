@@ -8,6 +8,9 @@ import 'package:mailbot_app/screens/settings_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'camera_his_screen.dart';
 import 'delivery_his_screen.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'dart:async';
 
 class HomeScreen extends StatefulWidget {
   final String serialNum;
@@ -207,7 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                socketConnect();
+              },
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -524,5 +529,20 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [],
       ),
     );
+  }
+
+  socketConnect() async {
+    Socket socket = await Socket.connect('192.168.1.124', 65432);
+    print('connected');
+
+    socket.listen((List<int> event) {
+      print(utf8.decode(event));
+    });
+
+    socket.add(utf8.encode('1'));
+
+    await Future.delayed(Duration(seconds: 5));
+
+    socket.close();
   }
 }

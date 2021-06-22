@@ -133,20 +133,40 @@ class DAO {
     return ret;
   }
 
-  Future<UserModel> login(String serialNum, String configCode) async {
+  Future<UserModel> connect(
+      String serialNum, String configCode, String email) async {
     var user = UserModel();
     var ddb = await db.getConnection();
-    var check = false;
     await ddb.query(
-        "SELECT * FROM `Mailbot` WHERE `serial_num` = ? AND `config_code` = ?",
-        [serialNum, configCode]).then((results) {
+        "UPDATE `User` SET `mailbot_serialNum` = ? WHERE `User`.`email` = ?",
+        [serialNum, email]);
+    await ddb.query("SELECT * FROM `User` WHERE mailbot_serialNum = ?",
+        [serialNum]).then((results) {
+      results.forEach((element) async {
+        user = UserModel(
+            userID: element.fields['userID'],
+            email: element.fields['email'].toString(),
+            serialNum: element.fields['mailbot_serialNum'].toString());
+      });
+    });
+    return user;
+  }
+
+  Future<UserModel> loginC(String password, String email) async {
+    var ddb = await db.getConnection();
+    var check = false;
+    var user = UserModel();
+    print(password + ":" + email);
+    await ddb.query(
+        "SELECT mailbot_serialNum FROM `User` WHERE `login_pw` = ? AND `email` = ?",
+        [password, email]).then((results) {
       if (results.length == 1) {
         check = true;
       }
     });
     if (check) {
-      await ddb.query("SELECT * FROM `User` WHERE mailbot_serialNum = ?",
-          [serialNum]).then((results) {
+      await ddb.query("SELECT * FROM `User` WHERE `email` = ?", [email]).then(
+          (results) {
         if (results.length == 1) {
           results.forEach((element) async {
             user = UserModel(
@@ -158,31 +178,6 @@ class DAO {
       });
     }
     return user;
-  }
-
-  Future<String> loginC(String password, String email) async {
-    var ddb = await db.getConnection();
-    var check = true;
-    var serial = "false";
-    print(password + ":" + email);
-    await ddb.query(
-        "SELECT 'mailbot_serialNum' FROM `User` WHERE `login_pw` = ? AND `email` = ?",
-        [password, email]).then((results) {
-      if (results.length == 1) {
-        check = true;
-      }
-    });
-    if (check) {
-      await ddb.query("SELECT mailbot_serialNum FROM `User` WHERE email = ?",
-          [email]).then((results) {
-        if (results.length == 1) {
-          results.forEach((element) async {
-            serial = element.fields['mailbot_serialNum'].toString();
-          });
-        }
-      });
-    }
-    return serial;
   }
 
   Future<String> editEmail(String oldEmail, String newEmail) async {

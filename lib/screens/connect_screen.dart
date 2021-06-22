@@ -5,16 +5,15 @@ import 'package:mailbot_app/logic/DAO.dart';
 import 'package:mailbot_app/screens/home_screen.dart';
 
 class ConnectToMailbot extends StatefulWidget {
-  final String serial;
-
-  const ConnectToMailbot({this.serial});
+  final String email;
+  ConnectToMailbot({this.email});
   @override
-  _ConnectToMailbotState createState() => _ConnectToMailbotState(serial);
+  _ConnectToMailbotState createState() => _ConnectToMailbotState(email);
 }
 
 class _ConnectToMailbotState extends State<ConnectToMailbot> {
-  String serial;
-  _ConnectToMailbotState(this.serial);
+  String email;
+  _ConnectToMailbotState(this.email);
   final TextEditingController _textEditingController = TextEditingController();
   final TextEditingController _textEditingController1 = TextEditingController();
 
@@ -103,13 +102,11 @@ class _ConnectToMailbotState extends State<ConnectToMailbot> {
                   ),
                   onPressed: () async {
                     await sql
-                        .login(_textEditingController.text,
-                            _textEditingController1.text)
+                        .connect(_textEditingController.text,
+                            _textEditingController1.text, email)
                         .then((value) async {
-                      if (value.email != null) {
-                        if (value.serialNum == serial) {
-                          connected = true;
-                        }
+                      if (value.serialNum != null) {
+                        connected = true;
                         if (connected) {
                           EdgeAlert.show(
                             context,

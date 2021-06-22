@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/BO.dart';
 import 'package:mailbot_app/logic/DAO.dart';
 import 'package:mailbot_app/logic/User.dart';
-import 'package:mailbot_app/screens/connect_screen.dart';
+import 'package:mailbot_app/screens/home_screen.dart';
 import 'package:mailbot_app/screens/registration_screen.dart';
 
 class Login extends StatefulWidget {
@@ -116,8 +116,7 @@ class _LoginState extends State<Login> {
                           _textEditingController.text,
                         )
                             .then((value) {
-                          if (value != 'false') {
-                            print(value);
+                          if (value.email != null) {
                             EdgeAlert.show(
                               context,
                               title: 'Logged in Successfully',
@@ -128,8 +127,10 @@ class _LoginState extends State<Login> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(builder: (context) {
-                                return ConnectToMailbot(
-                                  serial: value,
+                                return HomeScreen(
+                                  email: value.email,
+                                  userID: value.userID.toString(),
+                                  serialNum: value.serialNum,
                                 );
                               }),
                             );

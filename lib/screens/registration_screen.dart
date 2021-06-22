@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/BO.dart';
 import 'package:mailbot_app/logic/DAO.dart';
 import 'package:mailbot_app/logic/User.dart';
+import 'package:mailbot_app/screens/connect_screen.dart';
 import 'package:mailbot_app/screens/login_screen.dart';
 
 class Register extends StatefulWidget {
@@ -123,7 +124,9 @@ class _RegisterState extends State<Register> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(builder: (context) {
-                                return Login();
+                                return ConnectToMailbot(
+                                  email: _textEditingController.text,
+                                );
                               }),
                             );
                           }
