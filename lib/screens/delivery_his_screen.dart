@@ -1,21 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
+import 'package:mailbot_app/models/camerahistory.dart';
 import 'package:mailbot_app/models/dileveryitemmodel.dart';
 
 import 'delivery_info_screen.dart';
 
 class DeliveryHistory extends StatefulWidget {
+  final String email;
+  DeliveryHistory({this.email});
   @override
-  _DeliveryHistoryState createState() => _DeliveryHistoryState();
+  _DeliveryHistoryState createState() => _DeliveryHistoryState(email);
 }
 
 class _DeliveryHistoryState extends State<DeliveryHistory> {
+  String email;
+  _DeliveryHistoryState(this.email);
   final TextEditingController _textEditingController1 = TextEditingController();
   List<DItem> items = [];
+  List<CameraHisModel> cItems = [];
   List<DItem> _searchResult = [];
   var sql = DAO();
   @override
   void initState() {
+    sql.getCameraHistory(email).then((value) {
+      setState(() {
+        cItems = value;
+      });
+    });
     sql.getAllItems().then((value) {
       setState(() {
         items = value;
@@ -124,6 +135,9 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
                                                 title: _searchResult[i].title,
                                                 time: _searchResult[i].time,
                                                 num: _searchResult[i].id,
+                                                url: cItems[i].url != null
+                                                    ? cItems[i].url
+                                                    : "www.google.com",
                                               );
                                             }),
                                           );
@@ -180,6 +194,9 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
                                                 title: items[i].title,
                                                 time: items[i].time,
                                                 num: items[i].id,
+                                                url: cItems[i].url != null
+                                                    ? cItems[i].url
+                                                    : "www.google.com",
                                               );
                                             }),
                                           );

@@ -33,7 +33,7 @@ class DAO {
     List<DItem> result = [];
     var ddb = await db.getConnection();
     await ddb
-        .query("SELECT * FROM `Delivery` WHERE `delivery_status` = 'pending'")
+        .query("SELECT * FROM `Delivery` WHERE `delivery_status` = 'Pending'")
         .then((results) {
       results.forEach((element) async {
         result.add(DItem(
@@ -51,7 +51,7 @@ class DAO {
     var ddb = await db.getConnection();
     await ddb
         .query(
-            "SELECT * FROM `Delivery` WHERE `weight` = 'invalid' or `size` = 'invalid'")
+            "SELECT * FROM `Delivery` WHERE `weight` = 'Invalid' or `size` = 'Invalid'")
         .then((results) {
       results.forEach((element) async {
         result.add(DItem(

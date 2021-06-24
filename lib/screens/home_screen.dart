@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
+import 'package:mailbot_app/models/camerahistory.dart';
 import 'package:mailbot_app/models/dileveryitemmodel.dart';
 import 'package:mailbot_app/screens/add_item_screen.dart';
 import 'package:mailbot_app/screens/delivery_info_screen.dart';
@@ -10,7 +11,6 @@ import 'camera_his_screen.dart';
 import 'delivery_his_screen.dart';
 import 'dart:io';
 import 'dart:convert';
-import 'dart:async';
 
 class HomeScreen extends StatefulWidget {
   final String serialNum;
@@ -35,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<DItem> items = [];
   List<DItem> ditems = [];
   List<DItem> _searchResult = [];
+  List<CameraHisModel> cItems = [];
   var sql = DAO();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   var itemsLength = 0;
@@ -42,6 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
   var invalidLength = 0;
   @override
   void initState() {
+    sql.getCameraHistory(email).then((value) {
+      print(value.first.url);
+      setState(() {
+        cItems = value;
+      });
+    });
     sql.checkValidWeightSize().then((value) {
       setState(() {
         invalidLength = value.length;
@@ -166,7 +173,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return DeliveryHistory();
+                    return DeliveryHistory(
+                      email: email,
+                    );
                   }),
                 );
               },
@@ -382,6 +391,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       return DeliveryInfo(
                                         title: items[i].title.toString(),
                                         num: items[i].id.toString(),
+                                        url: cItems[i].url != null
+                                            ? cItems[i].url
+                                            : "www.google.com",
                                         time: items[i].time,
                                       );
                                     }),
@@ -456,6 +468,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         return DeliveryInfo(
                                           title: ditems.first.title.toString(),
                                           num: ditems.first.id.toString(),
+                                          url: cItems[i].url != null
+                                              ? cItems[i].url
+                                              : "www.google.com",
                                           time: ditems.first.time,
                                         );
                                       }),

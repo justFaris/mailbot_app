@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DeliveryInfo extends StatefulWidget {
   final String title;
   final String num;
+  final String url;
   final DateTime time;
-  DeliveryInfo({this.title, this.num, this.time});
+  DeliveryInfo({this.title, this.num, this.url, this.time});
 
   @override
-  _DeliveryInfoState createState() => _DeliveryInfoState(title, num, time);
+  _DeliveryInfoState createState() => _DeliveryInfoState(title, num, url, time);
 }
 
 class _DeliveryInfoState extends State<DeliveryInfo> {
-  String title, num;
+  String title, num, url;
   DateTime time;
   DateFormat date = DateFormat('yyyy/MM/dd');
   DateFormat timee = DateFormat('H:m:s');
-  _DeliveryInfoState(this.title, this.num, this.time);
+  _DeliveryInfoState(this.title, this.num, this.url, this.time);
 
   @override
   void initState() {
@@ -118,7 +120,12 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                               Icons.camera_alt,
                               size: 18,
                             ),
-                            onPressed: () {}),
+                            onPressed: () async {
+                              print(url);
+                              await launch(
+                                "http://${url}",
+                              );
+                            }),
                       ],
                     ),
                   ),
