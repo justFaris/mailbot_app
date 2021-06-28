@@ -43,6 +43,7 @@ class DAO {
             status: element.fields['delivery_status']));
       });
     });
+    ddb.close();
     return result;
   }
 
@@ -61,6 +62,7 @@ class DAO {
             status: element.fields['delivery_status']));
       });
     });
+    ddb.close();
     return result;
   }
 
@@ -78,6 +80,7 @@ class DAO {
             status: element.fields['delivery_status']));
       });
     });
+    ddb.close();
     return result;
   }
 
@@ -96,6 +99,7 @@ class DAO {
         ));
       });
     });
+    ddb.close();
     return result;
   }
 
@@ -107,6 +111,7 @@ class DAO {
         "INSERT INTO Delivery (orderNum, money_pocket, auto_empty, Title) VALUES (?, ?, ?, ?)",
         [orderNum, moneyPocket, autoEmpty, title]);
     // await ddb.query("INSERT INTO has_delivery (userID, orderNum) VALUES (?, ?)", [userID, orderNum]);
+    ddb.close();
     return result;
   }
 
@@ -130,6 +135,7 @@ class DAO {
         ret = error.toString();
       });
     }
+    ddb.close();
     return ret;
   }
 
@@ -149,6 +155,7 @@ class DAO {
             serialNum: element.fields['mailbot_serialNum'].toString());
       });
     });
+    ddb.close();
     return user;
   }
 
@@ -177,6 +184,7 @@ class DAO {
         }
       });
     }
+    ddb.close();
     return user;
   }
 
@@ -215,6 +223,7 @@ class DAO {
         });
       });
     }
+    ddb.close();
     return ret;
   }
 
@@ -252,6 +261,7 @@ class DAO {
         });
       });
     }
+    ddb.close();
     return ret;
   }
 }
