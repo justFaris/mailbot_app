@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
+import 'package:mailbot_app/screens/home_screen.dart';
 
 class AddItem extends StatefulWidget {
+  final String serialNum;
   final String userID;
+  final String email;
 
-  const AddItem({this.userID});
+  const AddItem({
+    this.serialNum,
+    this.userID,
+    this.email,
+  });
   @override
-  _AddItemState createState() => _AddItemState(userID);
+  _AddItemState createState() => _AddItemState(serialNum, userID, email);
 }
 
 class _AddItemState extends State<AddItem> {
+  String serialNum;
   String userID;
-  _AddItemState(this.userID);
+  String email;
+  _AddItemState(this.serialNum, this.userID, this.email);
   var sql = DAO();
   final TextEditingController _textEditingController1 = TextEditingController();
   final TextEditingController _textEditingController2 = TextEditingController();
@@ -139,7 +148,15 @@ class _AddItemState extends State<AddItem> {
                         value == true ? 1 : 0,
                         value2 == true ? 1 : 0,
                         _textEditingController1.text);
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) {
+                        return HomeScreen(
+                          email: email,
+                          userID: userID,
+                          serialNum: serialNum,
+                        );
+                      }),
+                    );
                   },
                 ),
               )

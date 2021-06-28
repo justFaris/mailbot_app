@@ -26,24 +26,28 @@ Future<void> main() async {
 }
 
 void callbackDispatcher() {
+  sql.getAllItems().then((value) {
+    itemsLength = value.length;
+  });
+  sql.getPendingItems().then((value) {
+    dLength = value.length;
+  });
+  sql.checkValidWeightSize().then((value) {
+    invalidLength = value.length;
+  });
   Workmanager().executeTask((task, inputData) async {
     sql.getPendingItems().then((value) {
-      itemsLength = value.length;
-
       sql.getAllItems().then((value2) {
-        dLength = value2.length;
         if (itemsLength != value.length && itemsLength <= value.length) {
-          if (dLength != value2.length && dLength >= value2.length) {
-            showNotification(
-                'Item was Delivered', 'Item Delivered Successfully');
-          }
+          itemsLength = value.length;
+          showNotification('Item was Delivered', 'Item Delivered Successfully');
         }
       });
     });
     sql.checkValidWeightSize().then((value) {
-      invalidLength = value.length;
       if (invalidLength != value.length && invalidLength <= value.length) {
         showNotification('Invalid Item', 'Item Weight or Size Invalid');
+        invalidLength = value.length;
       }
     });
     return Future.value(true);

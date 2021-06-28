@@ -123,7 +123,7 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                             onPressed: () async {
                               print(url);
                               await launch(
-                                "http://${url}",
+                                "http://$url",
                               );
                             }),
                       ],

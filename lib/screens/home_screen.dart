@@ -68,28 +68,21 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     new Timer.periodic(Duration(seconds: 10), (t) {
       sql.getPendingItems().then((value) {
-        setState(() {
-          items = value;
-        });
-        sql.getAllItems().then((value2) {
+        if (itemsLength != value.length && itemsLength >= value.length) {
           setState(() {
-            ditems = value2;
-            dLength = value2.length;
+            items = value;
+            itemsLength = value.length;
           });
-          if (itemsLength != value.length && itemsLength <= value.length) {
-            if (dLength != value2.length && dLength >= value2.length) {
-              showNotification(
-                  'Item was Delivered', 'Item Delivered Successfully');
-              setState(() {
-                itemsLength = value.length;
-                dLength = value2.length;
-              });
-            }
-          }
-        });
+          showNotification('Delivered Item', 'Item Delivered Successfully');
+        } else {
+          setState(() {
+            items = value;
+            itemsLength = value.length;
+          });
+        }
       });
       sql.checkValidWeightSize().then((value) {
-        if (invalidLength != value.length && invalidLength <= value.length) {
+        if (invalidLength != value.length && invalidLength >= value.length) {
           setState(() {
             invalidLength = value.length;
           });
@@ -150,7 +143,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return AddItem(userID: userID);
+                    return AddItem(
+                      email: email,
+                      userID: userID,
+                      serialNum: serialNum,
+                    );
                   }),
                 );
               },
@@ -326,7 +323,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) {
-                            return AddItem(userID: userID);
+                            return AddItem(
+                              email: email,
+                              userID: userID,
+                              serialNum: serialNum,
+                            );
                           }),
                         );
                       })
@@ -338,84 +339,89 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                 ),
-                child: _searchResult.length != 0 ||
-                        _textEditingController1.text.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: _searchResult.length,
-                        itemBuilder: (ctx, i) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) {
-                                      return DeliveryInfo(
-                                        title:
-                                            _searchResult[i].title.toString(),
-                                        num: _searchResult[i].id.toString(),
-                                        time: _searchResult[i].time,
+                child: items.length == 0
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : _searchResult.length != 0 ||
+                            _textEditingController1.text.isNotEmpty
+                        ? ListView.builder(
+                            itemCount: _searchResult.length,
+                            itemBuilder: (ctx, i) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) {
+                                          return DeliveryInfo(
+                                            title: _searchResult[i]
+                                                .title
+                                                .toString(),
+                                            num: _searchResult[i].id.toString(),
+                                            time: _searchResult[i].time,
+                                          );
+                                        }),
                                       );
-                                    }),
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0, top: 10),
-                                  child: Text(_searchResult[i].title,
-                                      style: TextStyle(
-                                        color: Colors.blueGrey,
-                                      )),
-                                ),
-                              ),
-                              Divider(
-                                indent: 15,
-                                endIndent: 15,
-                                thickness: 1,
-                              ),
-                            ],
-                          );
-                        })
-                    : ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (ctx, i) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) {
-                                      return DeliveryInfo(
-                                        title: items[i].title.toString(),
-                                        num: items[i].id.toString(),
-                                        url: cItems[i].url != null
-                                            ? cItems[i].url
-                                            : "www.google.com",
-                                        time: items[i].time,
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20.0, top: 10),
+                                      child: Text(_searchResult[i].title,
+                                          style: TextStyle(
+                                            color: Colors.blueGrey,
+                                          )),
+                                    ),
+                                  ),
+                                  Divider(
+                                    indent: 15,
+                                    endIndent: 15,
+                                    thickness: 1,
+                                  ),
+                                ],
+                              );
+                            })
+                        : ListView.builder(
+                            itemCount: items.length,
+                            itemBuilder: (ctx, i) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) {
+                                          return DeliveryInfo(
+                                            title: items[i].title.toString(),
+                                            num: items[i].id.toString(),
+                                            url: cItems[i].url != null
+                                                ? cItems[i].url
+                                                : "www.google.com",
+                                            time: items[i].time,
+                                          );
+                                        }),
                                       );
-                                    }),
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0, top: 10),
-                                  child: Text(items[i].title,
-                                      style: TextStyle(
-                                        color: Colors.blueGrey,
-                                      )),
-                                ),
-                              ),
-                              Divider(
-                                indent: 15,
-                                endIndent: 15,
-                                thickness: 1,
-                              ),
-                            ],
-                          );
-                        }),
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20.0, top: 10),
+                                      child: Text(items[i].title,
+                                          style: TextStyle(
+                                            color: Colors.blueGrey,
+                                          )),
+                                    ),
+                                  ),
+                                  Divider(
+                                    indent: 15,
+                                    endIndent: 15,
+                                    thickness: 1,
+                                  ),
+                                ],
+                              );
+                            }),
               ),
               SizedBox(
                 height: 20,
@@ -445,51 +451,59 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                 ),
-                child: ListView.builder(
-                    itemCount: 1,
-                    itemBuilder: (ctx, i) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20.0, top: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(ditems.first.title,
-                                    style: TextStyle(
-                                      color: Colors.blueGrey,
-                                    )),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) {
-                                        return DeliveryInfo(
-                                          title: ditems.first.title.toString(),
-                                          num: ditems.first.id.toString(),
-                                          url: cItems[i].url != null
-                                              ? cItems[i].url
-                                              : "www.google.com",
-                                          time: ditems.first.time,
+                child: items.length == 0
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.builder(
+                        itemCount: 1,
+                        itemBuilder: (ctx, i) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 20.0, top: 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(ditems.first.title,
+                                        style: TextStyle(
+                                          color: Colors.blueGrey,
+                                        )),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) {
+                                            return DeliveryInfo(
+                                              title:
+                                                  ditems.first.title.toString(),
+                                              num: ditems.first.id.toString(),
+                                              url: cItems[i].url != null
+                                                  ? cItems[i].url
+                                                  : "www.google.com",
+                                              time: ditems.first.time,
+                                            );
+                                          }),
                                         );
-                                      }),
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: Icon(
-                                      Icons.info_outline,
-                                      color: Colors.blueGrey,
+                                      },
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 8.0),
+                                        child: Icon(
+                                          Icons.info_outline,
+                                          color: Colors.blueGrey,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
+                              ),
+                            ],
+                          );
+                        }),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
