@@ -45,7 +45,7 @@ void callbackDispatcher() {
       });
     });
     sql.checkValidWeightSize().then((value) {
-      if (invalidLength != value.length && invalidLength <= value.length) {
+      if (invalidLength != value.length && invalidLength >= value.length) {
         showNotification('Invalid Item', 'Item Weight or Size Invalid');
         invalidLength = value.length;
       }

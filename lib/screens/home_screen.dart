@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:mailbot_app/logic/DAO.dart';
 import 'package:mailbot_app/models/camerahistory.dart';
@@ -44,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     sql.getCameraHistory(email).then((value) {
-      print(value.first.url);
       setState(() {
         cItems = value;
       });
@@ -69,11 +69,15 @@ class _HomeScreenState extends State<HomeScreen> {
     new Timer.periodic(Duration(seconds: 10), (t) {
       sql.getPendingItems().then((value) {
         if (itemsLength != value.length && itemsLength >= value.length) {
-          setState(() {
-            items = value;
-            itemsLength = value.length;
+          sql.getAllItems().then((value2) {
+            setState(() {
+              items = value;
+              itemsLength = value.length;
+              ditems = value2;
+              dLength = value2.length;
+            });
+            showNotification('Delivered Item', 'Item Delivered Successfully');
           });
-          showNotification('Delivered Item', 'Item Delivered Successfully');
         } else {
           setState(() {
             items = value;
@@ -562,14 +566,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   socketConnect() async {
     Socket socket = await Socket.connect('192.168.1.124', 65432);
-    print('connected');
-
     socket.listen((List<int> event) {
       print(utf8.decode(event));
     });
-
-    socket.add(utf8.encode('1'));
-
+    var message = Uint8List(1);
+    var bytedata = ByteData.view(message.buffer);
+    bytedata.setUint8(0, 0x01);
+    socket.add(message);
     await Future.delayed(Duration(seconds: 5));
 
     socket.close();
