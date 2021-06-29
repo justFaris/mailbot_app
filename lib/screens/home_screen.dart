@@ -81,6 +81,8 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {
             items = value;
             itemsLength = value.length;
+            ditems = value2;
+            dLength = value2.length;
           });
         }
       });
