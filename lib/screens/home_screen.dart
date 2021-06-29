@@ -68,8 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     new Timer.periodic(Duration(seconds: 10), (t) {
       sql.getPendingItems().then((value) {
-        if (itemsLength != value.length && itemsLength >= value.length) {
-          sql.getAllItems().then((value2) {
+        sql.getAllItems().then((value2) {
+        if (itemsLength != value.length && itemsLength >= value.length) {       
             setState(() {
               items = value;
               itemsLength = value.length;
@@ -77,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
               dLength = value2.length;
             });
             showNotification('Delivered Item', 'Item Delivered Successfully');
-          });
         } else {
           setState(() {
             items = value;
@@ -85,12 +84,17 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
       });
+      });
       sql.checkValidWeightSize().then((value) {
         if (invalidLength != value.length && invalidLength >= value.length) {
           setState(() {
             invalidLength = value.length;
           });
           showNotification('Invalid Item', 'Item Weight or Size Invalid');
+        } else {
+         setState(() {
+            invalidLength = value.length;
+          });
         }
       });
     });
