@@ -22,16 +22,17 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
   var sql = DAO();
   @override
   void initState() {
-    sql.getCameraHistory(email).then((value) {
-      setState(() {
-        cItems = value;
-      });
-    });
     sql.getAllItems().then((value) {
       setState(() {
         items = value;
       });
     });
+    sql.getCameraHistory(email).then((value) {
+      setState(() {
+        cItems = value;
+      });
+    });
+
     super.initState();
   }
 
@@ -106,126 +107,134 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                 ),
-                child: _searchResult.length != 0 ||
-                        _textEditingController1.text.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: _searchResult.length,
-                        itemBuilder: (ctx, i) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    IconButton(
-                                        icon: Icon(
-                                          Icons.info_outline,
-                                          color: Colors.blue,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                              return DeliveryInfo(
-                                                title: _searchResult[i].title,
-                                                time: _searchResult[i].time,
-                                                num: _searchResult[i].id,
-                                                url: cItems[i].url != null
-                                                    ? cItems[i].url
-                                                    : "www.google.com",
+                child: items.length == 0
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : _searchResult.length != 0 ||
+                            _textEditingController1.text.isNotEmpty
+                        ? ListView.builder(
+                            itemCount: _searchResult.length,
+                            itemBuilder: (ctx, i) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        IconButton(
+                                            icon: Icon(
+                                              Icons.info_outline,
+                                              color: Colors.blue,
+                                            ),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                                  return DeliveryInfo(
+                                                    title:
+                                                        _searchResult[i].title,
+                                                    time: _searchResult[i].time,
+                                                    num: _searchResult[i].id,
+                                                    url: cItems[i].url != null
+                                                        ? cItems[i].url
+                                                        : "www.google.com",
+                                                  );
+                                                }),
                                               );
                                             }),
-                                          );
-                                        }),
-                                    Expanded(
-                                      child: Text(
-                                        _searchResult[i].id.toString(),
-                                        style: TextStyle(
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Text(
-                                      _searchResult[i].time.toString(),
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Divider(
-                                indent: 15,
-                                endIndent: 15,
-                                thickness: 1,
-                              ),
-                            ],
-                          );
-                        })
-                    : ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (ctx, i) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    IconButton(
-                                        icon: Icon(
-                                          Icons.info_outline,
-                                          color: Colors.blue,
+                                        Expanded(
+                                          child: Text(
+                                            _searchResult[i].id.toString(),
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                         ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                              return DeliveryInfo(
-                                                title: items[i].title,
-                                                time: items[i].time,
-                                                num: items[i].id,
-                                                url: cItems[i].url != null
-                                                    ? cItems[i].url
-                                                    : "www.google.com",
-                                              );
+                                        Text(
+                                          _searchResult[i].time.toString(),
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    indent: 15,
+                                    endIndent: 15,
+                                    thickness: 1,
+                                  ),
+                                ],
+                              );
+                            })
+                        : ListView.builder(
+                            itemCount: items.length,
+                            itemBuilder: (ctx, i) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        IconButton(
+                                            icon: Icon(
+                                              Icons.info_outline,
+                                              color: Colors.blue,
+                                            ),
+                                            onPressed: () {
+                                              cItems.forEach((rec) {
+                                                if (int.parse(items[i].id) ==
+                                                    rec.orderNum) {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                      return DeliveryInfo(
+                                                        title: items[i].title,
+                                                        time: items[i].time,
+                                                        num: items[i].id,
+                                                        url: rec.url,
+                                                      );
+                                                    }),
+                                                  );
+                                                }
+                                              });
                                             }),
-                                          );
-                                        }),
-                                    Expanded(
-                                      child: Text(
-                                        items[i].id.toString(),
-                                        style: TextStyle(
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                        Expanded(
+                                          child: Text(
+                                            items[i].id.toString(),
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Text(
+                                          items[i].time.toString(),
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      items[i].time.toString(),
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Divider(
-                                indent: 15,
-                                endIndent: 15,
-                                thickness: 1,
-                              ),
-                            ],
-                          );
-                        }),
+                                  ),
+                                  Divider(
+                                    indent: 15,
+                                    endIndent: 15,
+                                    thickness: 1,
+                                  ),
+                                ],
+                              );
+                            }),
               ),
             ],
           ),

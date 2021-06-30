@@ -3,7 +3,6 @@ class DItem {
   String title;
   DateTime time;
   String status;
-
   DItem({
     this.id,
     this.title,

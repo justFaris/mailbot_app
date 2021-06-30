@@ -87,7 +87,7 @@ class DAO {
   Future<List<CameraHisModel>> getCameraHistory(String email) async {
     List<CameraHisModel> result = [];
     var ddb = await db.getConnection();
-    await ddb.query("select * from user_rec where email = ?", [email]).then(
+    await ddb.query("SELECT * FROM `user_rec` WHERE `email` = ?", [email]).then(
         (results) {
       results.forEach((element) async {
         result.add(CameraHisModel(
@@ -98,8 +98,8 @@ class DAO {
           url: element.fields['URL'],
         ));
       });
-    });
-    ddb.close();
+    }).whenComplete(() => ddb.close());
+
     return result;
   }
 
@@ -110,7 +110,8 @@ class DAO {
     await ddb.query(
         "INSERT INTO Delivery (orderNum, money_pocket, auto_empty, Title) VALUES (?, ?, ?, ?)",
         [orderNum, moneyPocket, autoEmpty, title]);
-    await ddb.query("INSERT INTO has_delivery (userID, orderNum) VALUES (?, ?)", [userID, orderNum]);
+    await ddb.query("INSERT INTO has_delivery (userID, orderNum) VALUES (?, ?)",
+        [userID, orderNum]);
     ddb.close();
     return result;
   }
