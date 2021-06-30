@@ -399,12 +399,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context,
                                         MaterialPageRoute(builder: (context) {
                                           return DeliveryInfo(
-                                            title: items[i].title.toString(),
-                                            num: items[i].id.toString(),
-                                            url: cItems[i].url != null
-                                                ? cItems[i].url
-                                                : "www.google.com",
+                                            title: items[i].title,
                                             time: items[i].time,
+                                            num: items[i].id,
+                                            url: "https://www.google.com/",
                                           );
                                         }),
                                       );
@@ -478,20 +476,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                         )),
                                     GestureDetector(
                                       onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) {
-                                            return DeliveryInfo(
-                                              title:
-                                                  ditems.first.title.toString(),
-                                              num: ditems.first.id.toString(),
-                                              url: cItems[i].url != null
-                                                  ? cItems[i].url
-                                                  : "www.google.com",
-                                              time: ditems.first.time,
+                                        cItems.forEach((rec) {
+                                          if (int.parse(ditems[i].id) ==
+                                              rec.orderNum) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                                return DeliveryInfo(
+                                                  title: ditems[i].title,
+                                                  time: ditems[i].time,
+                                                  num: ditems[i].id,
+                                                  url: rec.url,
+                                                );
+                                              }),
                                             );
-                                          }),
-                                        );
+                                          }
+                                        });
                                       },
                                       child: Padding(
                                         padding:

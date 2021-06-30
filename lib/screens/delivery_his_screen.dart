@@ -132,21 +132,23 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
                                               color: Colors.blue,
                                             ),
                                             onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) {
-                                                  return DeliveryInfo(
-                                                    title:
-                                                        _searchResult[i].title,
-                                                    time: _searchResult[i].time,
-                                                    num: _searchResult[i].id,
-                                                    url: cItems[i].url != null
-                                                        ? cItems[i].url
-                                                        : "www.google.com",
+                                              cItems.forEach((rec) {
+                                                if (int.parse(items[i].id) ==
+                                                    rec.orderNum) {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                      return DeliveryInfo(
+                                                        title: items[i].title,
+                                                        time: items[i].time,
+                                                        num: items[i].id,
+                                                        url: rec.url,
+                                                      );
+                                                    }),
                                                   );
-                                                }),
-                                              );
+                                                }
+                                              });
                                             }),
                                         Expanded(
                                           child: Text(

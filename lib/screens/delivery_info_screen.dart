@@ -1,3 +1,4 @@
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -121,10 +122,19 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                               size: 18,
                             ),
                             onPressed: () async {
-                              print(url);
-                              await launch(
-                                url,
-                              );
+                              if (url != "https://www.google.com/") {
+                                await launch(
+                                  url,
+                                );
+                              } else {
+                                EdgeAlert.show(
+                                  context,
+                                  title: 'No Recording',
+                                  icon: Icons.error,
+                                  backgroundColor: Colors.red,
+                                  gravity: EdgeAlert.LENGTH_LONG,
+                                );
+                              }
                             }),
                       ],
                     ),

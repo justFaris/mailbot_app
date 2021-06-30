@@ -122,10 +122,7 @@ class _CameraHisScreenState extends State<CameraHisScreen> {
                                 IconButton(
                                     icon: Icon(Icons.camera_alt),
                                     onPressed: () async {
-                                      await launch(
-                                        'https://${mod[i].url}',
-                                        forceWebView: true,
-                                      );
+                                      await launch(mod[i].url);
                                     })
                               ],
                             ),
