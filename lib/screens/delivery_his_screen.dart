@@ -133,16 +133,20 @@ class _DeliveryHistoryState extends State<DeliveryHistory> {
                                             ),
                                             onPressed: () {
                                               cItems.forEach((rec) {
-                                                if (int.parse(items[i].id) ==
+                                                if (int.parse(
+                                                        _searchResult[i].id) ==
                                                     rec.orderNum) {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) {
                                                       return DeliveryInfo(
-                                                        title: items[i].title,
-                                                        time: items[i].time,
-                                                        num: items[i].id,
+                                                        title: _searchResult[i]
+                                                            .title,
+                                                        time: _searchResult[i]
+                                                            .time,
+                                                        num:
+                                                            _searchResult[i].id,
                                                         url: rec.url,
                                                       );
                                                     }),
