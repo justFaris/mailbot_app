@@ -110,7 +110,7 @@ class DAO {
     await ddb.query(
         "INSERT INTO Delivery (orderNum, money_pocket, auto_empty, Title) VALUES (?, ?, ?, ?)",
         [orderNum, moneyPocket, autoEmpty, title]);
-    // await ddb.query("INSERT INTO has_delivery (userID, orderNum) VALUES (?, ?)", [userID, orderNum]);
+    await ddb.query("INSERT INTO has_delivery (userID, orderNum) VALUES (?, ?)", [userID, orderNum]);
     ddb.close();
     return result;
   }
