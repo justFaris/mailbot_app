@@ -68,8 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     new Timer.periodic(Duration(seconds: 10), (t) {
       sql.getPendingItems().then((value) {
-        if (itemsLength != value.length && itemsLength >= value.length) {
-          sql.getAllItems().then((value2) {
+        sql.getAllItems().then((value2) {
+          if (itemsLength != value.length && itemsLength >= value.length) {
             setState(() {
               items = value;
               itemsLength = value.length;
@@ -77,15 +77,15 @@ class _HomeScreenState extends State<HomeScreen> {
               dLength = value2.length;
             });
             showNotification('Delivered Item', 'Item Delivered Successfully');
-          });
-        } else {
-          setState(() {
-            items = value;
-            itemsLength = value.length;
-            ditems = value;
-            dLength = value.length;
-          });
-        }
+          } else {
+            setState(() {
+              items = value;
+              itemsLength = value.length;
+              ditems = value2;
+              dLength = value2.length;
+            });
+          }
+        });
       });
       sql.checkValidWeightSize().then((value) {
         if (invalidLength != value.length && invalidLength >= value.length) {
@@ -472,23 +472,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(ditems.first.title,
+                                    Text(ditems.last.title,
                                         style: TextStyle(
                                           color: Colors.blueGrey,
                                         )),
                                     GestureDetector(
                                       onTap: () {
                                         cItems.forEach((rec) {
-                                          if (int.parse(ditems[i].id) ==
+                                          if (int.parse(ditems.last.id) ==
                                               rec.orderNum) {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) {
                                                 return DeliveryInfo(
-                                                  title: ditems[i].title,
-                                                  time: ditems[i].time,
-                                                  num: ditems[i].id,
+                                                  title: ditems.last.title,
+                                                  time: ditems.last.time,
+                                                  num: ditems.last.id,
                                                   url: rec.url,
                                                 );
                                               }),
